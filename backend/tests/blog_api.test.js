@@ -87,6 +87,22 @@ describe('blog tests:', () => {
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
   })
 
+  // check if the url or title properties are missing from the request
+  test('are url or title properties missing ', async () => {
+    const newBlog = {
+      title: 'async/await simplifies making async calls',
+      author: 'FullStack',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
   // test('a specific note can be viewed', async () => {
   //   const notesAtStart = await helper.notesInDb()
   //   const noteToView = notesAtStart[0]
