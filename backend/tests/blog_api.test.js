@@ -95,12 +95,23 @@ describe('blog tests:', () => {
     }
 
     await api
-      .post('/api/blogs')
+      .post('/api/blogs/')
       .send(newBlog)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
+  // tests deleting route
+  test('deleting a blog', async () => {
+    const blogTitle = 'Adobe is horrible. So I tried the alternative'
+    const blogs = await helper.blogsInDb()
+    const blog = blogs.find(blog => blog.title === blogTitle)
+    const blogId = blog.id
+    await api
+      .delete(`/api/blogs/${blogId}`)
+      .expect(204)
   })
 
   // test('a specific note can be viewed', async () => {
