@@ -103,6 +103,7 @@ describe('blog tests:', () => {
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 
+
   // tests deleting route
   test('deleting a blog', async () => {
     const blogTitle = 'Adobe is horrible. So I tried the alternative'
@@ -114,6 +115,26 @@ describe('blog tests:', () => {
       .expect(204)
   })
 
+  // updating a blog
+  test('updating a blog', async () => {
+    const newBlog = {
+      title: 'Adobe is horrible. So I tried the alternative',
+      likes: 34725980234
+    }
+
+    const blogTitle = newBlog.title
+    const blogs = await helper.blogsInDb()
+    const blog = blogs.find(blog => blog.title === blogTitle)
+    const blogId = blog.id
+
+    await api
+      .put(`/api/blogs/${blogId}`)
+      .send(newBlog)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
   // test('a specific note can be viewed', async () => {
   //   const notesAtStart = await helper.notesInDb()
   //   const noteToView = notesAtStart[0]
