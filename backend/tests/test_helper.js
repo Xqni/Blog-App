@@ -1,0 +1,25 @@
+const Blog = require('../models/blog')
+
+const initialBlogs = [
+  {
+    title: 'Adobe is horrible. So I tried the alternative',
+    author: 'Bog',
+    url: 'https://youtu.be/zabpcOP7H3U?si=RycNVmn3r3cMiI6R',
+    likes: 47000
+  },
+  {
+    title: 'Tarik Reacts to Paper Rex vs G2 | PLAYOFFS | VCT Masters Toronto 2025',
+    author: 'Tarik',
+    url: 'https://www.youtube.com/watch?v=mrR3qxVDN_g',
+    likes: 3300
+  }
+]
+
+const blogsInDb = async () => {
+  const notes = await Blog.find({})
+  return notes.map(note => note.toJSON())
+}
+
+module.exports = {
+  initialBlogs, blogsInDb
+}
