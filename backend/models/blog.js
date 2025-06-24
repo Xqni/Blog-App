@@ -13,6 +13,12 @@ const blogSchema = mongoose.Schema({
   likes: {
     type: Number,
     required: true
+  },
+
+  // stores the id of the user who created the blog
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User' // reference to registered User model
   }
 })
 

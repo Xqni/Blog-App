@@ -14,17 +14,16 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-// blog tests
-describe('blog tests:', () => {
-
-  // check if the api works
+// All of the valid blog tests
+describe('Valid Blog Tests', () => {
+  // Test #1
   test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
-  // check if api returns JSON formatted data
+  // Test #2
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -32,8 +31,7 @@ describe('blog tests:', () => {
       .expect('Content-Type', /application\/json/)
   })
 
-  // check if _id is deleted or not
-  // moreso a test for toJSON function at ../models/blog
+  // Test #3
   test('unique identifier is named id and not _id', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
@@ -46,13 +44,14 @@ describe('blog tests:', () => {
     })
   })
 
-  // check addition of a new blog is possible
+  // Test #4
   test('a valid blog can be added ', async () => {
     const newBlog = {
       title: 'async/await simplifies making async calls',
       author: 'FullStack',
       url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
-      likes: 7000
+      likes: 7000,
+      user: '685a99bd70a59d47ebfde704'
     }
 
     await api
@@ -68,43 +67,7 @@ describe('blog tests:', () => {
     assert(blogTitles.includes('async/await simplifies making async calls'))
   })
 
-  // check if the likes property is missing from the request
-  // default to 0
-  test('is like property missing from request ', async () => {
-    const newBlog = {
-      title: 'async/await simplifies making async calls',
-      author: 'FullStack',
-      url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
-    }
-
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
-  })
-
-  // check if the url or title properties are missing from the request
-  test('are url or title properties missing ', async () => {
-    const newBlog = {
-      title: 'async/await simplifies making async calls',
-      author: 'FullStack',
-    }
-
-    await api
-      .post('/api/blogs/')
-      .send(newBlog)
-      .expect(400)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
-  })
-
-
-  // tests deleting route
+  // Test #5
   test('deleting a blog', async () => {
     const blogTitle = 'Adobe is horrible. So I tried the alternative'
     const blogs = await helper.blogsInDb()
@@ -115,7 +78,7 @@ describe('blog tests:', () => {
       .expect(204)
   })
 
-  // updating a blog
+  // Test #6
   test('updating a blog', async () => {
     const newBlog = {
       title: 'Adobe is horrible. So I tried the alternative',
@@ -162,6 +125,44 @@ describe('blog tests:', () => {
 
   //   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1)
   // })
+})
+
+// All invalid blog tests
+describe('Invalid Blog Tests', () => {
+
+  // Test #1
+  test('is like property missing from request ', async () => {
+    const newBlog = {
+      title: 'async/await simplifies making async calls',
+      author: 'FullStack',
+      url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+  })
+
+  // Test #2
+  test('are url or title properties missing ', async () => {
+    const newBlog = {
+      title: 'async/await simplifies making async calls',
+      author: 'FullStack',
+    }
+
+    await api
+      .post('/api/blogs/')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
 })
 
 after(async () => {

@@ -24,6 +24,7 @@ beforeEach(async () => {
     .expect(201)
 })
 
+// All valid user tests
 describe('Valid User Tests', () => {
 
   test('all users are returned', async () => {
@@ -56,7 +57,7 @@ describe('Valid User Tests', () => {
 
   test('adding a new user', async () => {
     const testUser = {
-      username: 'pompumii',
+      username: 'poimii',
       name: 'Amy',
       password: 'qwerty'
     }
@@ -71,7 +72,7 @@ describe('Valid User Tests', () => {
     assert.strictEqual(usersAtEnd.length, helper.initialUsers.length + 1)
 
     const usernames = usersAtEnd.map(user => user.username)
-    assert(usernames.includes('pompumii'))
+    assert(usernames.includes('poimii'))
   })
 })
 
@@ -126,6 +127,7 @@ describe('Invalid User Tests', () => {
   })
 })
 
+// closes db connection after tests
 after(async () => {
   await mongoose.connection.close()
 })

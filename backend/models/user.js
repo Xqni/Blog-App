@@ -14,7 +14,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     minLength: 3,
     required: true
-  }
+  },
+
+  // stores blogs created by the user in an array
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog' // refrence to registered Blog model
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
