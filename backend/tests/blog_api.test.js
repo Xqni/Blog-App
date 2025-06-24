@@ -46,6 +46,7 @@ describe('blog tests:', () => {
     })
   })
 
+  // check addition of a new blog is possible
   test('a valid blog can be added ', async () => {
     const newBlog = {
       title: 'async/await simplifies making async calls',
@@ -65,6 +66,25 @@ describe('blog tests:', () => {
 
     const blogTitles = blogsAtEnd.map(blog => blog.title)
     assert(blogTitles.includes('async/await simplifies making async calls'))
+  })
+
+  // check if the likes property is missing from the request
+  // default to 0
+  test('is like property missing from request ', async () => {
+    const newBlog = {
+      title: 'async/await simplifies making async calls',
+      author: 'FullStack',
+      url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
   })
 
   // test('a specific note can be viewed', async () => {
