@@ -8,23 +8,42 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
+// re-initialize the test database before testing
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
 })
 
+// blog tests
 describe('blog tests:', () => {
+
+  // check if the api works
   test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
+  // check if api returns JSON formatted data
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
+  })
+
+  // check if _id is deleted or not
+  // moreso a test for toJSON function at ../models/blog
+  test('unique identifier is named id and not _id', async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+    blogs.forEach(blog => {
+      // read documentation if dont get it
+      // https://nodejs.org/api/assert.html#assertokvalue-message
+
+      assert.ok(blog.id)
+      assert.strictEqual(blog._id, undefined)
+    })
   })
 
   test('a valid blog can be added ', async () => {
