@@ -10,38 +10,22 @@ import loginService from './services/login'
 const App = () => {
     const [blogs, setBlogs] = useState([])
 
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-
-
     const [user, setUser] = useState(null)
 
     const [message, setMessage] = useState(null)
     const [messageType, setType] = useState(null)
 
     const blogFormRef = useRef()
+    const loginFormRef = useRef()
 
-    const handleUsername = ({ target }) => {
-        setUsername(target.value)
-    }
-
-    const handlePassword = ({ target }) => {
-        setPassword(target.value)
-    }
-
-    const handleLogin = async (event) => {
-        event.preventDefault()
+    const loginUser = async (userObj) => {
         try {
-            const user = await loginService.login({
-                username, password
-            })
+            const user = await loginService.login(userObj)
 
             blogService.setToken(user.token)
             window.localStorage.setItem('loggedInUser', JSON.stringify(user))
             // noteService.setToken(user.token)
             setUser(user)
-            setUsername('')
-            setPassword('')
         } catch (error) {
             setMessage(error.response.data.error)
             setType('error')
@@ -113,12 +97,8 @@ const App = () => {
                         {/* show notifications here */}
                         {message && <Notification message={message} type={messageType} />}
 
-                        <Togglable buttonLabel='Login'>
-                            <LoginForm
-                                onSubmit={handleLogin}
-                                onchange={[handleUsername, handlePassword]}
-                                value={[username, password]}
-                            />
+                        <Togglable buttonLabel='Login' ref={loginFormRef}>
+                            <LoginForm loginUser={loginUser} />
                         </Togglable>
 
                     </div>
