@@ -6,9 +6,15 @@ import loginService from './services/login'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
+
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setURL] = useState('')
+
     const [user, setUser] = useState(null)
+
     const [ErrorMessage, setErrorMessage] = useState(null)
 
 
@@ -27,6 +33,7 @@ const App = () => {
                 username, password
             })
 
+            blogService.setToken(user.token)
             window.localStorage.setItem('loggedInUser', JSON.stringify(user))
             // noteService.setToken(user.token)
             setUser(user)
@@ -40,6 +47,37 @@ const App = () => {
                 setErrorMessage(null)
             }, 5000);
         }
+    }
+    const handleBlogCreate = async (event) => {
+        event.preventDefault()
+
+        try {
+            await blogService.createBlog({
+                title: title,
+                author: author,
+                url: url
+            })
+            await blogService
+                .getAll()
+                .then(blogs =>
+                    setBlogs(blogs)
+                )
+        }
+        catch (exception) {
+            console.log(exception)
+        }
+    }
+
+    const handleTitleChange = ({ target }) => {
+        setTitle(target.value)
+    }
+
+    const handleAuthorChange = ({ target }) => {
+        setAuthor(target.value)
+    }
+
+    const handleURLChange = ({ target }) => {
+        setURL(target.value)
     }
 
     const handleLogout = async () => {
@@ -60,7 +98,7 @@ const App = () => {
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
             setUser(user)
-            // noteService.setToken(user.token)
+            blogService.setToken(user.token)
         }
     }, [])
 
@@ -68,10 +106,30 @@ const App = () => {
         <div>
             {
                 user === null ?
+                    // if a user is not logged in, display the login form
                     <LoginForm onSubmit={handleLogin} onchange={[handleUsername, handlePassword]} value={[username, password]} />
                     :
+                    // if a user is logged in
                     <div>
                         <h2>Blogs</h2>
+                        <div>
+                            <h3>Create New</h3>
+                            <form onSubmit={handleBlogCreate}>
+                                <div>
+                                    title
+                                    <input type="text" name="Title" value={title} onChange={handleTitleChange} />
+                                </div>
+                                <div>
+                                    author
+                                    <input type="text" name="Author" value={author} onChange={handleAuthorChange} />
+                                </div>
+                                <div>
+                                    url
+                                    <input type="text" name="URL" value={url} onChange={handleURLChange} />
+                                </div>
+                                <button type="submit">create</button>
+                            </form>
+                        </div>
                         <br />
                         <div>
                             {user.name} logged in
