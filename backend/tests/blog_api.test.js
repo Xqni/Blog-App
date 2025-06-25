@@ -9,10 +9,23 @@ const Blog = require('../models/blog')
 const api = supertest(app)
 
 // re-initialize the test database before testing
+// also get token before each test
+let loggedInToken = ''
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  const loggedInUser = await api.post('/api/login')
+    .send({
+      'username': 'damianqt',
+      'password': 'qwerty'
+    })
+    .expect(200)
+  loggedInToken = loggedInUser.body.token
 })
+
+const getAuthHeader = () => {
+  return { Authorization: `Bearer ${loggedInToken}` }
+}
 
 // All of the valid blog tests
 describe('Valid Blog Tests', () => {
@@ -48,14 +61,13 @@ describe('Valid Blog Tests', () => {
   test('a valid blog can be added ', async () => {
     const newBlog = {
       title: 'async/await simplifies making async calls',
-      author: 'FullStack',
       url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
       likes: 7000,
-      user: '685a99bd70a59d47ebfde704'
     }
 
     await api
       .post('/api/blogs')
+      .set(getAuthHeader())
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -75,13 +87,14 @@ describe('Valid Blog Tests', () => {
     const blogId = blog.id
     await api
       .delete(`/api/blogs/${blogId}`)
+      .set(getAuthHeader())
       .expect(204)
   })
 
   // Test #6
   test('updating a blog', async () => {
     const newBlog = {
-      title: 'Adobe is horrible. So I tried the alternative',
+      title: 'Tarik Reacts to Paper Rex vs G2 | PLAYOFFS | VCT Masters Toronto 2025',
       likes: 34725980234
     }
 
@@ -134,12 +147,12 @@ describe('Invalid Blog Tests', () => {
   test('is like property missing from request ', async () => {
     const newBlog = {
       title: 'async/await simplifies making async calls',
-      author: 'FullStack',
       url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
     }
 
     await api
       .post('/api/blogs')
+      .set(getAuthHeader())
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -152,18 +165,35 @@ describe('Invalid Blog Tests', () => {
   test('are url or title properties missing ', async () => {
     const newBlog = {
       title: 'async/await simplifies making async calls',
-      author: 'FullStack',
     }
 
     await api
       .post('/api/blogs/')
+      .set(getAuthHeader())
       .send(newBlog)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
+
+  // Test #3
+  test('a blog can\'t be added without token', async () => {
+    const newBlog = {
+      title: 'async/await simplifies making async calls',
+      url: 'https://fullstackopen.com/en/part4/testing_the_backend#a-true-full-stack-developers-oath',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
 })
+
 
 after(async () => {
   await mongoose.connection.close()

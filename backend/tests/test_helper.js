@@ -5,17 +5,17 @@ const User = require('../models/user')
 const initialBlogs = [
   {
     title: 'Adobe is horrible. So I tried the alternative',
-    author: 'Bog',
+    author: 'Damian',
     url: 'https://youtu.be/zabpcOP7H3U?si=RycNVmn3r3cMiI6R',
     likes: 47000,
-    user: '685a99bd70a59d47ebfde704'
+    user: '685a929cddba662bb1555233'
   },
   {
     title: 'Tarik Reacts to Paper Rex vs G2 | PLAYOFFS | VCT Masters Toronto 2025',
     author: 'Tarik',
     url: 'https://www.youtube.com/watch?v=mrR3qxVDN_g',
     likes: 3300,
-    user: '685a99bd70a59d47ebfde704'
+    user: '685a929cddba662bb1555233'
   }
 ]
 
