@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -16,7 +17,8 @@ const App = () => {
 
     const [user, setUser] = useState(null)
 
-    const [ErrorMessage, setErrorMessage] = useState(null)
+    const [message, setMessage] = useState(null)
+    const [messageType, setType] = useState(null)
 
 
     const handleUsername = ({ target }) => {
@@ -40,13 +42,13 @@ const App = () => {
             setUser(user)
             setUsername('')
             setPassword('')
-        } catch (exception) {
-            setErrorMessage('Wrong credentials')
-            console.log(ErrorMessage)
-            console.log(exception)
+        } catch (error) {
+            setMessage(error.response.data.error)
+            setType('error')
             setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000);
+                setMessage(null)
+                setType(null)
+            }, 5000)
         }
     }
     const handleBlogCreate = async (event) => {
@@ -63,12 +65,23 @@ const App = () => {
                 .then(blogs =>
                     setBlogs(blogs)
                 )
+            setMessage(`Created a blog '${title}' by ${author}`)
+            setType('success')
+            setTimeout(() => {
+                setMessage(null)
+                setType(null)
+            }, 5000)
             setTitle('')
             setAuthor('')
             setURL('')
         }
-        catch (exception) {
-            console.log(exception)
+        catch (error) {
+            setMessage(error.response.data.error)
+            setType('error')
+            setTimeout(() => {
+                setMessage(null)
+                setType(null)
+            }, 5000)
         }
     }
 
@@ -111,17 +124,35 @@ const App = () => {
             {
                 user === null ?
                     // if a user is not logged in, display the login form
-                    <LoginForm onSubmit={handleLogin} onchange={[handleUsername, handlePassword]} value={[username, password]} />
+                    <div>
+                        <h2>Login Form</h2>
+
+                        {/* show notifications here */}
+                        {message && <Notification message={message} type={messageType} />}
+
+                        <LoginForm onSubmit={handleLogin} onchange={[handleUsername, handlePassword]} value={[username, password]} />
+                    </div>
+
                     :
                     // if a user is logged in
                     <div>
-                        <BlogForm onSubmit={handleBlogCreate} value={[title, author, url]} onChange={[handleTitleChange, handleAuthorChange, handleURLChange]} />
-                        <br />
+                        <h2>Blogs</h2>
+
+                        {/* show notifications here */}
+                        {message && <Notification message={message} type={messageType} />}
+
                         <div>
-                            {user.name} logged in
-                            <button onClick={handleLogout}>logout</button>
+                            {user.name} logged in.
+                            <button onClick={handleLogout}>Logout</button>
                         </div>
+
+                        <BlogForm onSubmit={handleBlogCreate} value={[title, author, url]} onChange={[handleTitleChange, handleAuthorChange, handleURLChange]} />
+
                         <br />
+
+
+                        <br />
+
                         <div>
                             {blogs.map(blog =>
                                 <Blog key={blog.id} blog={blog} />

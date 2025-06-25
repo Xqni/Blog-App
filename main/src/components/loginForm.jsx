@@ -1,9 +1,8 @@
 const LoginForm = ({ onSubmit, value, onchange }) => (
     <>
-        <h2>Login Form</h2>
         <form onSubmit={onSubmit}>
             <div>
-                username <br />
+                Username <br />
                 <input
                     type="text"
                     value={value[0]}
@@ -12,7 +11,7 @@ const LoginForm = ({ onSubmit, value, onchange }) => (
                 />
             </div>
             <div>
-                password <br />
+                Password <br />
                 <input
                     type="password"
                     value={value[1]}
@@ -22,7 +21,7 @@ const LoginForm = ({ onSubmit, value, onchange }) => (
             </div>
             <div></div>
             <br />
-            <button type="submit">login</button>
+            <button type="submit">Login</button>
         </form>
     </>
 )

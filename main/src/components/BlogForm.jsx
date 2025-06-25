@@ -1,20 +1,20 @@
 const BlogForm = ({ onSubmit, value, onChange }) => (
     <>
-        <h3>Create New</h3>
+        <h2>Create New</h2>
         <form onSubmit={onSubmit}>
             <div>
-                title
+                Title
                 <input type="text" name="Title" value={value[0]} onChange={onChange[0]} />
             </div>
             <div>
-                author
+                Author
                 <input type="text" name="Author" value={value[1]} onChange={onChange[1]} />
             </div>
             <div>
-                url
+                URL
                 <input type="text" name="URL" value={value[2]} onChange={onChange[2]} />
             </div>
-            <button type="submit">create</button>
+            <button type="submit">Create</button>
         </form>
     </>
 )
