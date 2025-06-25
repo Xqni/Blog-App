@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -114,25 +115,7 @@ const App = () => {
                     :
                     // if a user is logged in
                     <div>
-                        <h2>Blogs</h2>
-                        <div>
-                            <h3>Create New</h3>
-                            <form onSubmit={handleBlogCreate}>
-                                <div>
-                                    title
-                                    <input type="text" name="Title" value={title} onChange={handleTitleChange} />
-                                </div>
-                                <div>
-                                    author
-                                    <input type="text" name="Author" value={author} onChange={handleAuthorChange} />
-                                </div>
-                                <div>
-                                    url
-                                    <input type="text" name="URL" value={url} onChange={handleURLChange} />
-                                </div>
-                                <button type="submit">create</button>
-                            </form>
-                        </div>
+                        <BlogForm onSubmit={handleBlogCreate} value={[title, author, url]} onChange={[handleTitleChange, handleAuthorChange, handleURLChange]} />
                         <br />
                         <div>
                             {user.name} logged in
