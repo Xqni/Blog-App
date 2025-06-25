@@ -62,6 +62,9 @@ const App = () => {
                 .then(blogs =>
                     setBlogs(blogs)
                 )
+            setTitle('')
+            setAuthor('')
+            setURL('')
         }
         catch (exception) {
             console.log(exception)
