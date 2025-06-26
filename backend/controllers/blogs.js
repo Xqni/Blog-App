@@ -1,9 +1,6 @@
 const userExtractor = require('../utils/middleware/userExtractor')
 const blogsRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-
 
 // fetching all blogs
 blogsRouter.get('/', async (request, response) => {
@@ -11,6 +8,13 @@ blogsRouter.get('/', async (request, response) => {
     .find({})
     .populate('user', { username: 1, id: 1 })
   response.json(blogs)
+})
+
+// fetching a specific blog
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog
+    .findById(request.params.id)
+  response.json(blog)
 })
 
 
@@ -48,16 +52,18 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 // updating a single blog post
 // mostly for likes
 blogsRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body
-
   const blog = await Blog.findById(request.params.id)
-  blog.title = title || blog.title
-  blog.author = author || blog.author
-  blog.url = url || blog.url
-  blog.likes = likes || blog.likes
+  if (blog) {
+    blog.title = request.body.title || blog.title
+    blog.author = request.body.author || blog.author
+    blog.url = request.body.url || blog.url
+    blog.likes = request.body.likes || blog.likes
 
-  const savedBlog = await blog.save()
-  response.status(204).json(savedBlog)
+    const savedBlog = await blog.save()
+    response.status(204).json(savedBlog)
+  } else {
+    response.status(400).json({ error: 'Invalid blog ID' })
+  }
 })
 
 module.exports = blogsRouter

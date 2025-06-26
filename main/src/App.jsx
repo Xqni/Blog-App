@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import _ from 'lodash'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
@@ -17,6 +18,15 @@ const App = () => {
 
     const blogFormRef = useRef()
     const loginFormRef = useRef()
+
+    const getBlogs = async () => {
+        await blogService
+            .getAll()
+            .then(blogs => {
+                const sortedBlogs = _.orderBy(blogs, ['likes'], ['desc'])
+                setBlogs(sortedBlogs)
+            })
+    }
 
     const loginUser = async (userObj) => {
         try {
@@ -39,11 +49,7 @@ const App = () => {
     const addBlog = async (blog) => {
         try {
             await blogService.createBlog(blog)
-            await blogService
-                .getAll()
-                .then(blogs =>
-                    setBlogs(blogs)
-                )
+            getBlogs()
             setMessage(`Created a blog '${blog.title}' by ${blog.author}`)
             blogFormRef.current.toggleVisibility()
             setType('success')
@@ -63,6 +69,21 @@ const App = () => {
         }
     }
 
+    const likeBlog = async (blog) => {
+        try {
+            await blogService.likeBlog(blog)
+            getBlogs()
+        } catch (error) {
+            console.log(error)
+            setMessage(error.response.data.error)
+            setType('error')
+            setTimeout(() => {
+                setMessage(null)
+                setType(null)
+            }, 5000)
+        }
+    }
+
 
     const handleLogout = async () => {
         setUser(null)
@@ -70,11 +91,7 @@ const App = () => {
     }
 
     useEffect(() => {
-        blogService
-            .getAll()
-            .then(blogs =>
-                setBlogs(blogs)
-            )
+        getBlogs()
     }, [])
 
     useEffect(() => {
@@ -121,7 +138,7 @@ const App = () => {
                         <br />
                         <div>
                             {blogs.map(blog =>
-                                <Blog key={blog.id} blog={blog} />
+                                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
                             )}
                         </div>
                     </div>

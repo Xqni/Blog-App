@@ -95,7 +95,7 @@ describe('Valid Blog Tests', () => {
   test('updating a blog', async () => {
     const newBlog = {
       title: 'Tarik Reacts to Paper Rex vs G2 | PLAYOFFS | VCT Masters Toronto 2025',
-      likes: 34725980234
+      likes: 25566
     }
 
     const blogTitle = newBlog.title

@@ -19,3 +19,13 @@
     color: #842029;
     border-color: #f5c2c7;
 }
+
+.blog {
+    background-color: #eeeeee;
+    display: flex;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid;
+    margin-bottom: 10px;
+}
