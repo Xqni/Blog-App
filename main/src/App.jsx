@@ -19,6 +19,15 @@ const App = () => {
     const blogFormRef = useRef()
     const loginFormRef = useRef()
 
+    const displayMsg = (message, type) => {
+        setMessage(message)
+        setType(type)
+        setTimeout(() => {
+            setMessage(null)
+            setType(null)
+        }, 5000)
+    }
+
     const getBlogs = async () => {
         await blogService
             .getAll()
@@ -34,15 +43,10 @@ const App = () => {
 
             blogService.setToken(user.token)
             window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-            // noteService.setToken(user.token)
+            blogService.setToken(user.token)
             setUser(user)
         } catch (error) {
-            setMessage(error.response.data.error)
-            setType('error')
-            setTimeout(() => {
-                setMessage(null)
-                setType(null)
-            }, 5000)
+            displayMsg(error.response.data.error, 'error')
         }
     }
 
@@ -50,22 +54,10 @@ const App = () => {
         try {
             await blogService.createBlog(blog)
             getBlogs()
-            setMessage(`Created a blog '${blog.title}' by ${blog.author}`)
-            blogFormRef.current.toggleVisibility()
-            setType('success')
-            setTimeout(() => {
-                setMessage(null)
-                setType(null)
-            }, 5000)
+            displayMsg(`Created a blog '${blog.title}' by ${blog.author}`, 'success')
 
-        }
-        catch (error) {
-            setMessage(error.response.data.error)
-            setType('error')
-            setTimeout(() => {
-                setMessage(null)
-                setType(null)
-            }, 5000)
+        } catch (error) {
+            displayMsg(error.response.data.error, 'error')
         }
     }
 
@@ -74,16 +66,19 @@ const App = () => {
             await blogService.likeBlog(blog)
             getBlogs()
         } catch (error) {
-            console.log(error)
-            setMessage(error.response.data.error)
-            setType('error')
-            setTimeout(() => {
-                setMessage(null)
-                setType(null)
-            }, 5000)
+            displayMsg(error.response.data.error, 'error')
         }
     }
 
+    const deleteBlog = async blogID => {
+        try {
+            await blogService.deleteBlog(blogID)
+            getBlogs()
+            displayMsg('Blog deleted!', 'success')
+        } catch (error) {
+            displayMsg(error.response.data.error, 'error')
+        }
+    }
 
     const handleLogout = async () => {
         setUser(null)
@@ -138,7 +133,7 @@ const App = () => {
                         <br />
                         <div>
                             {blogs.map(blog =>
-                                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+                                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} user={user} deleteBlog={deleteBlog} />
                             )}
                         </div>
                     </div>

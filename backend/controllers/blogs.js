@@ -40,11 +40,13 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
   const blog = await Blog.findById(request.params.id)
-  if (blog.user.toString() === request.user.id.toString()) {
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  } else if (blog.user.toString() === request.user.id.toString()) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   } else {
-    response.status(400).json({ error: 'User is not the creator of the blog' })
+    response.status(403).json({ error: 'User is not the creator of the blog' })
   }
 })
 
