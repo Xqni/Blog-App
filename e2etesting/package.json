@@ -8,7 +8,9 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test --project=chromium",
+    "test:debug": "playwright test --project=chromium --debug",
     "test:ui": "playwright test --ui",
+    "test:trace": "playwright test --trace on",
     "test:report": "playwright show-report"
   },
   "devDependencies": {
