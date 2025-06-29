@@ -52,6 +52,7 @@ const App = () => {
 
     const addBlog = async (blog) => {
         try {
+            blogFormRef.current.toggleVisibility()
             await blogService.createBlog(blog)
             getBlogs()
             displayMsg(`Created a blog '${blog.title}' by ${blog.author}`, 'success')
@@ -103,7 +104,7 @@ const App = () => {
             {
                 user === null ?
                     // if a user is not logged in, display the login form
-                    <div>
+                    <>
                         <h2>Login Form</h2>
 
                         {/* show notifications here */}
@@ -113,11 +114,11 @@ const App = () => {
                             <LoginForm loginUser={loginUser} />
                         </Togglable>
 
-                    </div>
+                    </>
 
                     :
                     // if a user is logged in
-                    <div>
+                    <>
                         <h2>Blogs</h2>
 
                         {/* show notifications here */}
@@ -136,7 +137,7 @@ const App = () => {
                                 <Blog key={blog.id} blog={blog} likeBlog={likeBlog} user={user} deleteBlog={deleteBlog} />
                             )}
                         </div>
-                    </div>
+                    </>
             }
 
         </div>

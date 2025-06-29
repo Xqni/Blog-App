@@ -32,6 +32,7 @@ const LoginForm = ({ loginUser }) => {
                 <div>
                     Username <br />
                     <input
+                        data-testid='form-username'
                         type="text"
                         value={username}
                         name="Username"
@@ -41,6 +42,7 @@ const LoginForm = ({ loginUser }) => {
                 <div>
                     Password <br />
                     <input
+                        data-testid='form-password'
                         type="password"
                         value={password}
                         name="Password"
@@ -56,11 +58,11 @@ const LoginForm = ({ loginUser }) => {
 }
 
 LoginForm.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
-  handleUsername: PropTypes.func.isRequired,
-  handlePassword: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
+    handleLogin: PropTypes.func.isRequired,
+    handleUsername: PropTypes.func.isRequired,
+    handlePassword: PropTypes.func.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired
 }
 
 export default LoginForm
